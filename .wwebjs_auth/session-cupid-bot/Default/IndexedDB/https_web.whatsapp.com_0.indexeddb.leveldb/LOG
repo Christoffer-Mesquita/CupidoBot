@@ -1,0 +1,35 @@
+2025/06/11-08:44:53.519 b2f4 Reusing MANIFEST C:\Users\Admin\Documents\Desenvolvimento\Cupido\.wwebjs_auth\session-cupid-bot\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/06/11-08:44:53.519 b2f4 Recovering log #174
+2025/06/11-08:44:53.733 b2f4 Reusing old log C:\Users\Admin\Documents\Desenvolvimento\Cupido\.wwebjs_auth\session-cupid-bot\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000174.log 
+2025/06/11-08:44:53.734 b2f4 Delete type=2 #168
+2025/06/11-08:44:53.734 b2f4 Delete type=2 #171
+2025/06/11-08:44:53.734 b2f4 Delete type=2 #172
+2025/06/11-08:44:53.734 b2f4 Delete type=2 #173
+2025/06/11-08:44:53.734 b2f4 Delete type=2 #175
+2025/06/11-08:44:56.439 8ad8 Level-0 table #181: started
+2025/06/11-08:44:56.466 8ad8 Level-0 table #181: 448017 bytes OK
+2025/06/11-08:44:56.468 8ad8 Delete type=0 #174
+2025/06/11-08:44:56.469 8ad8 Manual compaction at level-0 from '\x00!\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00"\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/06/11-08:44:59.968 b2f4 Compacting 1@1 + 5@2 files
+2025/06/11-08:45:00.195 b2f4 Generated table #182@1: 59569 keys, 2225459 bytes
+2025/06/11-08:45:00.309 b2f4 Generated table #183@1: 25415 keys, 2186881 bytes
+2025/06/11-08:45:00.599 b2f4 Generated table #184@1: 83529 keys, 2230018 bytes
+2025/06/11-08:45:00.655 b2f4 Generated table #185@1: 21427 keys, 425390 bytes
+2025/06/11-08:45:00.655 b2f4 Compacted 1@1 + 5@2 files => 7067748 bytes
+2025/06/11-08:45:00.656 b2f4 compacted to: files[ 0 0 4 0 0 0 0 ]
+2025/06/11-08:45:06.870 479c Level-0 table #187: started
+2025/06/11-08:45:06.922 479c Level-0 table #187: 1117190 bytes OK
+2025/06/11-08:45:06.925 479c Delete type=2 #162
+2025/06/11-08:45:06.925 479c Delete type=2 #163
+2025/06/11-08:45:06.925 479c Delete type=2 #176
+2025/06/11-08:45:06.925 479c Delete type=2 #177
+2025/06/11-08:45:06.925 479c Delete type=2 #178
+2025/06/11-08:45:06.925 479c Delete type=0 #180
+2025/06/11-08:45:06.925 479c Delete type=2 #181
+2025/06/11-08:45:06.934 479c Compacting 1@1 + 3@2 files
+2025/06/11-08:45:07.123 479c Generated table #188@1: 62075 keys, 2223457 bytes
+2025/06/11-08:45:07.268 479c Generated table #189@1: 27083 keys, 2186108 bytes
+2025/06/11-08:45:07.421 479c Generated table #190@1: 64183 keys, 2221545 bytes
+2025/06/11-08:45:07.471 479c Generated table #191@1: 27526 keys, 546465 bytes
+2025/06/11-08:45:07.472 479c Compacted 1@1 + 3@2 files => 7177575 bytes
+2025/06/11-08:45:07.472 479c compacted to: files[ 0 0 5 0 0 0 0 ]
