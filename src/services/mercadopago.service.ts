@@ -12,7 +12,10 @@ export class MercadoPagoService {
     private whatsappClient: any;
 
     private constructor() {
-        const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN || 'APP_USR-6757036394702521-060908-53ba606a7aca64317acbce1cdb1d1a8a-118720625';
+        const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
+        if (!accessToken) {
+            throw new Error('MERCADOPAGO_ACCESS_TOKEN is not defined in environment variables.');
+        }
         this.mercadopago = new MercadoPagoConfig({ accessToken });
     }
 
@@ -105,8 +108,6 @@ export class MercadoPagoService {
                 });
             }
 
-            this.pollPaymentStatus(paymentId);
-
             return {
                 qrCodeImage,
                 paymentId,
@@ -119,69 +120,78 @@ export class MercadoPagoService {
         }
     }
 
-    private async pollPaymentStatus(paymentId: string): Promise<void> {
-        const maxAttempts = 24; // 2 minutes = 24 attempts (5 seconds each)
-        let attempts = 0;
+    public async handleWebhookNotification(notificationPayload: any): Promise<void> {
+        Logger.info('Recebida notificação de webhook do Mercado Pago:');
+        Logger.info(JSON.stringify(notificationPayload, null, 2));
 
-        const checkStatus = async () => {
-            try {
-                const status = await this.checkPaymentStatus(paymentId);
-                Logger.info(`Status do pagamento ${paymentId}: ${status}`);
+        try {
+            // TODO: Consultar a documentação do Mercado Pago para a estrutura exata do payload.
+            // Exemplo comum: notificationPayload.data.id ou notificationPayload.resource (URL do recurso)
+            const paymentId = notificationPayload?.data?.id || notificationPayload?.resource?.split('/').pop();
 
-                const payment = await PaymentModel.findOne({ mercadoPagoId: paymentId });
-                if (!payment) {
-                    Logger.error(`Pagamento ${paymentId} não encontrado no banco de dados`);
-                    return;
-                }
-
-                // Update payment status in database
-                await PaymentModel.findOneAndUpdate(
-                    { mercadoPagoId: paymentId },
-                    { $set: { status: status } }
-                );
-
-                if (status === 'approved') {
-                    Logger.success(`Pagamento ${paymentId} aprovado! 💚`);
-                    
-                    // Update user subscription
-                    if (!payment.metadata) {
-                        Logger.error('Metadados do pagamento não encontrados');
-                        return;
-                    }
-
-                    const packageType = payment.metadata.packageType as PackageType;
-                    const duration = PACKAGES[packageType].duration;
-                    const expiresAt = new Date();
-                    expiresAt.setDate(expiresAt.getDate() + duration);
-
-                    await User.findByIdAndUpdate(payment.userId, {
-                        $set: {
-                            'subscription.plan': packageType,
-                            'subscription.expiresAt': expiresAt,
-                            'subscription.isActive': true
-                        }
-                    });
-
-                    // Send success message
-                    await this.sendPaymentNotification(payment, 'approved');
-                    return;
-                }
-
-                attempts++;
-                if (attempts >= maxAttempts) {
-                    Logger.warning(`Tempo limite excedido para pagamento ${paymentId}`);
-                    // Send timeout message
-                    await this.sendPaymentNotification(payment, 'timeout');
-                    return;
-                }
-
-                setTimeout(checkStatus, 5000);
-            } catch (error) {
-                Logger.error(`Erro ao verificar status do pagamento ${paymentId}: ${error}`);
+            if (!paymentId) {
+                Logger.error('Não foi possível extrair o ID do pagamento da notificação do webhook.');
+                // Poderia lançar um erro aqui ou retornar, dependendo da política de tratamento.
+                // throw new Error('ID do pagamento não encontrado no payload do webhook.');
+                return;
             }
-        };
 
-        checkStatus();
+            Logger.info(`Processando notificação para o pagamento ID: ${paymentId}`);
+            const status = await this.checkPaymentStatus(paymentId.toString());
+            Logger.info(`Status atualizado do pagamento ${paymentId}: ${status}`);
+
+            const payment = await PaymentModel.findOne({ mercadoPagoId: paymentId.toString() });
+            if (!payment) {
+                Logger.error(`Pagamento ${paymentId} não encontrado no banco de dados para notificação de webhook.`);
+                // Poderia lançar um erro aqui ou retornar.
+                // throw new Error(`Pagamento ${paymentId} não encontrado no banco.`);
+                return;
+            }
+
+            // Atualiza o status do pagamento no banco de dados
+            await PaymentModel.findOneAndUpdate(
+                { mercadoPagoId: paymentId.toString() },
+                { $set: { status: status } }
+            );
+
+            if (status === 'approved') {
+                Logger.success(`Pagamento ${paymentId} aprovado via webhook! 💚`);
+
+                if (!payment.metadata) {
+                    Logger.error(`Metadados do pagamento ${paymentId} não encontrados.`);
+                    // throw new Error(`Metadados do pagamento ${paymentId} não encontrados.`);
+                    return;
+                }
+
+                const packageType = payment.metadata.packageType as PackageType;
+                const duration = PACKAGES[packageType].duration;
+                const expiresAt = new Date();
+                expiresAt.setDate(expiresAt.getDate() + duration);
+
+                await User.findByIdAndUpdate(payment.userId, {
+                    $set: {
+                        'subscription.plan': packageType,
+                        'subscription.expiresAt': expiresAt,
+                        'subscription.isActive': true
+                    }
+                });
+
+                await this.sendPaymentNotification(payment, 'approved');
+            } else if (status === 'cancelled' || status === 'failed' || status === 'rejected') {
+                // Opcional: Tratar outros status como cancelado, falhado, rejeitado
+                Logger.warning(`Pagamento ${paymentId} com status: ${status}. Notificando usuário se necessário.`);
+                // Se desejar, pode enviar uma notificação específica para esses casos.
+                // await this.sendPaymentNotification(payment, 'failed_or_cancelled'); // Precisaria adaptar sendPaymentNotification
+            } else {
+                Logger.info(`Pagamento ${paymentId} com status: ${status}. Nenhuma ação adicional por enquanto.`);
+            }
+
+        } catch (error) {
+            Logger.error(`Erro ao processar notificação de webhook do Mercado Pago: ${error instanceof Error ? error.message : JSON.stringify(error)}`);
+            // É importante não lançar um erro que derrube o servidor de webhook,
+            // a menos que seja uma falha crítica na configuração.
+            // O Mercado Pago pode tentar reenviar a notificação, então é bom logar bem o erro.
+        }
     }
 
     private async sendPaymentNotification(payment: any, type: 'approved' | 'timeout'): Promise<void> {

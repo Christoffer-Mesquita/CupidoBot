@@ -4,7 +4,7 @@ import { Logger } from '../utils/logger';
 export class DatabaseConnection {
     private static instance: DatabaseConnection;
     private isConnected: boolean = false;
-    private readonly uri: string = 'mongodb://localhost:27017/cupidbot';
+    private readonly uri: string | undefined = process.env.MONGODB_URI;
 
     private constructor() {}
 
@@ -19,6 +19,10 @@ export class DatabaseConnection {
         if (this.isConnected) {
             Logger.info('Reutilizando conexão existente com o banco de dados 💫');
             return;
+        }
+
+        if (!this.uri) {
+            throw new Error('MONGODB_URI is not defined in environment variables.');
         }
 
         try {

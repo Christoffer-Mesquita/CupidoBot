@@ -23,6 +23,7 @@ const paymentSchema = new mongoose.Schema({
     status: {
         type: String,
         required: true,
+        enum: ['pending', 'approved', 'failed', 'cancelled', 'expired', 'chargeback', 'timeout'],
         default: 'pending'
     },
     metadata: {
@@ -45,5 +46,10 @@ paymentSchema.pre('save', function(next) {
     this.updatedAt = new Date();
     next();
 });
+
+// Adicionar Índices:
+paymentSchema.index({ userId: 1 });
+paymentSchema.index({ status: 1 });
+paymentSchema.index({ userId: 1, status: 1 }); // Índice composto exemplo
 
 export const Payment = mongoose.model('Payment', paymentSchema); 

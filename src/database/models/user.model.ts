@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { PackageType } from '../../utils/constants';
+import { PACKAGES, PackageType } from '../../utils/constants';
 
 export interface IUser extends Document {
     phoneNumber: string;
@@ -49,7 +49,7 @@ const UserSchema = new Schema<IUser>({
     subscription: {
         plan: {
             type: String,
-            enum: ['BASIC', 'PREMIUM', 'VIP']
+            enum: Object.keys(PACKAGES) as PackageType[],
         },
         expiresAt: Date,
         isActive: {
@@ -66,5 +66,10 @@ const UserSchema = new Schema<IUser>({
         location: String
     }
 });
+
+// Adicionar Índices:
+UserSchema.index({ "subscription.isActive": 1 });
+UserSchema.index({ "subscription.expiresAt": 1 });
+UserSchema.index({ lastInteraction: 1 });
 
 export const User = mongoose.model<IUser>('User', UserSchema); 

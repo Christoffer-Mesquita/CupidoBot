@@ -1,3 +1,8 @@
+// TODO: Registrar fontes customizadas no início da aplicação (ex: em src/index.ts)
+// import { registerFont } from 'canvas';
+// import path from 'path';
+// registerFont(path.join(__dirname, '..', 'assets', 'fonts', 'YourCustomFont.ttf'), { family: 'YourCustomFontFamily' });
+
 import { createCanvas, loadImage, registerFont } from 'canvas';
 import path from 'path';
 
@@ -37,12 +42,14 @@ export class BannerService {
 
         // Add title
         ctx.fillStyle = 'white';
-        ctx.font = 'bold 48px Arial';
+        // ctx.font = 'bold 48px Arial'; // Antes
+        ctx.font = 'bold 48px Arial'; // Depois, após registrar a fonte: 'bold 48px YourCustomFontFamily'
         ctx.textAlign = 'center';
         ctx.fillText('Cupid Bot', width/2, 100);
 
         // Add subtitle
-        ctx.font = '24px Arial';
+        // ctx.font = '24px Arial'; // Antes
+        ctx.font = '24px Arial'; // Depois, após registrar a fonte: '24px YourCustomFontFamily'
         ctx.fillText('Seu Assistente do Amor', width/2, 140);
 
         // Add decorative border
@@ -147,14 +154,18 @@ export class BannerService {
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
                 
                 if (isVIP) {
-                    ctx.font = 'bold 40px Arial';
+                    // ctx.font = 'bold 40px Arial'; // Antes
+                    ctx.font = 'bold 40px Arial'; // Depois, após registrar a fonte: 'bold 40px YourCustomFontFamily'
                     ctx.fillText('✨ Mensagem VIP ✨', width/2, 60);
-                    ctx.font = '28px Arial';
+                    // ctx.font = '28px Arial'; // Antes
+                    ctx.font = '28px Arial'; // Depois, após registrar a fonte: '28px YourCustomFontFamily'
                     ctx.fillText('Enviada com Carinho Especial', width/2, height - 40);
                 } else {
-                    ctx.font = 'bold 36px Arial';
+                    // ctx.font = 'bold 36px Arial'; // Antes
+                    ctx.font = 'bold 36px Arial'; // Depois, após registrar a fonte: 'bold 36px YourCustomFontFamily'
                     ctx.fillText('💌 Mensagem Especial 💌', width/2, 60);
-                    ctx.font = '24px Arial';
+                    // ctx.font = '24px Arial'; // Antes
+                    ctx.font = '24px Arial'; // Depois, após registrar a fonte: '24px YourCustomFontFamily'
                     ctx.fillText('Enviada com Amor', width/2, height - 40);
                 }
                 ctx.shadowBlur = 0;
@@ -185,14 +196,18 @@ export class BannerService {
         ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
         
         if (isVIP) {
-            ctx.font = 'bold 40px Arial';
+            // ctx.font = 'bold 40px Arial'; // Antes
+            ctx.font = 'bold 40px Arial'; // Depois, após registrar a fonte: 'bold 40px YourCustomFontFamily'
             ctx.fillText('✨ Mensagem VIP ✨', width/2, height/2 - 20);
-            ctx.font = '28px Arial';
+            // ctx.font = '28px Arial'; // Antes
+            ctx.font = '28px Arial'; // Depois, após registrar a fonte: '28px YourCustomFontFamily'
             ctx.fillText('Enviada com Carinho Especial', width/2, height/2 + 30);
         } else {
-            ctx.font = 'bold 36px Arial';
+            // ctx.font = 'bold 36px Arial'; // Antes
+            ctx.font = 'bold 36px Arial'; // Depois, após registrar a fonte: 'bold 36px YourCustomFontFamily'
             ctx.fillText('💌 Mensagem Especial 💌', width/2, height/2 - 20);
-            ctx.font = '24px Arial';
+            // ctx.font = '24px Arial'; // Antes
+            ctx.font = '24px Arial'; // Depois, após registrar a fonte: '24px YourCustomFontFamily'
             ctx.fillText('Enviada com Amor', width/2, height/2 + 30);
         }
         ctx.shadowBlur = 0;

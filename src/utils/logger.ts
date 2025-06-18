@@ -11,7 +11,7 @@ export class Logger {
     }
 
     static success(message: string): void {
-        console.log(chalk.red(`[${this.timestamp()}] ${chalk.magenta('💘')} ${message}`));
+        console.log(chalk.green(`[${this.timestamp()}] ${chalk.magenta('💘')} ${message}`));
     }
 
     static error(message: string): void {

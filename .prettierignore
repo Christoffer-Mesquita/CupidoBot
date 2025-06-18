@@ -1,0 +1,4 @@
+node_modules/
+dist/
+coverage/
+# Adicione outros arquivos ou pastas que não devem ser formatados pelo Prettier
